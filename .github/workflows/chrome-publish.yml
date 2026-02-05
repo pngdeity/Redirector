@@ -1,0 +1,28 @@
+name: Publish to Chrome Web Store
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Build extension
+        run: python3 build.py
+
+      - name: Upload to Chrome Web Store
+        uses: wirekang/submit-chrome-webstore@v1
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          zip-file: build/redirector-chrome.zip
