@@ -29,8 +29,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# Extension Specific Development Artifacts
-devprofile/
-ffox.sh
-debug.sh
