@@ -44,7 +44,7 @@ npm install
 ## Download Links
 
 - [Firefox](https://addons.mozilla.org/firefox/addon/redirector/)
-- [Google Chrome and Vivaldi](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
+- [Chromium-based browsers](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
 
 ## Examples
 
