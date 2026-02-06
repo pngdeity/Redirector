@@ -269,16 +269,32 @@ export class RedirectClass {
     for (var i = matches.length - 1; i > 0; i--) {
       var repl = matches[i] || '';
       if (this.processMatches == 'urlDecode') {
-        repl = unescape(repl);
+        try {
+          repl = decodeURIComponent(repl);
+        } catch (e) {
+          // Keep original string on failure
+        }
       } else if (this.processMatches == 'doubleUrlDecode') {
-        repl = unescape(unescape(repl));
+        try {
+          repl = decodeURIComponent(decodeURIComponent(repl));
+        } catch (e) {
+          // Keep original string on failure
+        }
       } else if (this.processMatches == 'urlEncode') {
         repl = encodeURIComponent(repl);
       } else if (this.processMatches == 'base64decode') {
         if (repl.indexOf('%') > -1) {
-          repl = unescape(repl);
+          try {
+            repl = decodeURIComponent(repl);
+          } catch (e) {
+            // Keep original string on failure
+          }
         }
-        repl = atob(repl);
+        try {
+          repl = atob(repl);
+        } catch (e) {
+          console.error(`Redirector: Invalid base64 string "${repl}"`);
+        }
       }
       resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
     }
