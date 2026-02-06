@@ -72,8 +72,9 @@ function editFormChange() {
     activeRedirect.appliesTo.push((input as HTMLInputElement).value);
   }
 
-  activeRedirect.processMatches = (el('#process-matches option:checked') as HTMLOptionElement)
-    .value;
+  activeRedirect.processMatches = (
+    el('#process-matches option:checked') as HTMLOptionElement
+  ).value;
   activeRedirect.patternType = (el('[name="patterntype"]:checked') as HTMLInputElement).value;
 
   activeRedirect.updateExampleResult();

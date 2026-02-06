@@ -69,12 +69,9 @@ function load() {
   el('#toggle-disabled').addEventListener('click', toggleDisabled);
   el('#open-redirector-settings').addEventListener('click', openRedirectorSettings);
 
-  storage.get(
-    { logging: false, enableNotifications: false, disabled: false },
-    function (obj) {
-      // console.log(obj);
-    }
-  );
+  storage.get({ logging: false, enableNotifications: false, disabled: false }, function (obj) {
+    // console.log(obj);
+  });
 }
 
 load();

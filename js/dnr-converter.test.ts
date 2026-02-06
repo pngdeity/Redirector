@@ -69,7 +69,7 @@ describe('DNR Converter', () => {
     });
 
     const rule = convertToDNR(redirect, 3);
-    
+
     expect((rule?.condition as any).excludedRegexFilter).toBe('^http://example\\.com/admin/(.*?)$');
   });
 
@@ -94,14 +94,14 @@ describe('DNR Converter', () => {
     const rule = convertToDNR(redirect, 5);
     expect(rule).toBeNull();
   });
-  
+
   it('should map firefox specific types to closest compatible type', () => {
-      const redirect = new Redirect({
-          includePattern: '*', 
-          redirectUrl: 'foo',
-          appliesTo: ['imageset']
-      });
-      const rule = convertToDNR(redirect, 6);
-      expect(rule?.condition.resourceTypes).toContain('image');
+    const redirect = new Redirect({
+      includePattern: '*',
+      redirectUrl: 'foo',
+      appliesTo: ['imageset'],
+    });
+    const rule = convertToDNR(redirect, 6);
+    expect(rule?.condition.resourceTypes).toContain('image');
   });
 });

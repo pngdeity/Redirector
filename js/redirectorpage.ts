@@ -147,7 +147,9 @@ export function toggleDisabled(index: number) {
       let redirectDom = REDIRECTS[redirect.index];
       redirectDom.disabled = !redirectDom.disabled;
       redirectDom.grouped = !redirectDom.grouped;
-      let elm = document.querySelector("[data-index='" + redirect.index.toString() + "']") as HTMLElement;
+      let elm = document.querySelector(
+        "[data-index='" + redirect.index.toString() + "']"
+      ) as HTMLElement;
       clearGrouping(elm);
     }
   } else {

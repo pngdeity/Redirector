@@ -97,8 +97,7 @@ function pageLoad() {
 
 function updateFavicon(e: MediaQueryListEvent | MediaQueryList) {
   let type = e.matches ? 'dark' : 'light';
-  (el('link[rel="shortcut icon"]') as HTMLLinkElement).href =
-    `images/icon-${type}-theme-32.png`;
+  (el('link[rel="shortcut icon"]') as HTMLLinkElement).href = `images/icon-${type}-theme-32.png`;
   chrome.runtime.sendMessage({ type: 'update-icon' });
 }
 
