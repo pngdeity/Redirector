@@ -1,0 +1,41 @@
+name: Publish to Firefox Add-ons
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-firefox:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync Version from Tag
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "Syncing project version to $VERSION"
+          npm version $VERSION --no-git-tag-version
+          node -e "const fs = require('fs'); const m = JSON.parse(fs.readFileSync('manifest.json')); m.version = '$VERSION'; fs.writeFileSync('manifest.json', JSON.stringify(m, null, 2));"
+
+      - name: Build Extension
+        run: npm run build
+
+      - name: Upload to AMO
+        uses: wdzraly/web-ext-action@v1
+        with:
+          cmd: sign
+          source: dist
+          channel: listed
+          apiKey: ${{ secrets.AMO_JWT_ISSUER }}
+          apiSecret: ${{ secrets.AMO_JWT_SECRET }}
