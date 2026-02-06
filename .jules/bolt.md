@@ -1,0 +1,3 @@
+## 2025-02-19 - Recursive Replacement Pattern
+**Learning:** The `RedirectClass` uses a loop to replace capture groups `$1`...`$N` sequentially. This creates a "cascading" effect where if `$2` is replaced by a string containing `$1`, that `$1` will be replaced in the next iteration. This prevents single-pass regex optimizations (`replace(/\$(\d+)/g, ...)`) unless we are willing to break this behavior.
+**Action:** When optimizing template substitution, check for sequential replacement logic. Use `replaceAll` to optimize the individual steps while preserving the iterative behavior if strict backward compatibility is needed.

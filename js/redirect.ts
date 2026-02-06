@@ -280,7 +280,8 @@ export class RedirectClass {
         }
         repl = atob(repl);
       }
-      resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
+      // Performance optimization: use replaceAll to avoid creating a new RegExp for every capture group
+      resultUrl = resultUrl.replaceAll('$' + i, repl);
     }
     this._rxInclude.lastIndex = 0;
     return resultUrl;
