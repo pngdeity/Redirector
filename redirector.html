@@ -220,7 +220,7 @@
 
       <div id="message-box">
         <span data-bind="message" id="message"></span>
-        <a id="hide-message">&#x2716;</a>
+        <button id="hide-message" aria-label="Close message">&#x2716;</button>
       </div>
 
       <!-- List of existing redirects -->
@@ -272,6 +272,7 @@
                   class="btn medium grey move-uptop-btn arrows"
                   data-action="moveUpTop"
                   data-disabled="$first"
+                  aria-label="Move rule to top"
                 >
                   ⟰
                 </button>
@@ -281,6 +282,7 @@
                 class="btn medium grey move-up-btn"
                 data-action="moveUp"
                 data-disabled="$first"
+                aria-label="Move rule up"
               >
                 ▲
               </button>
@@ -288,6 +290,7 @@
                 class="btn medium grey move-down-btn"
                 data-action="moveDown"
                 data-disabled="$last"
+                aria-label="Move rule down"
               >
                 ▼
               </button>
@@ -296,6 +299,7 @@
                   class="btn medium grey move-downbottom-btn arrows"
                   data-action="moveDownBottom"
                   data-disabled="$last"
+                  aria-label="Move rule to bottom"
                 >
                   ⟱
                 </button>

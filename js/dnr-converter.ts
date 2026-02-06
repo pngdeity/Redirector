@@ -65,9 +65,7 @@ function convertSubstitution(url: string): string {
   return url.replace(/\$(\d+)/g, '\\$1');
 }
 
-function convertResourceTypes(
-  types: string[]
-): chrome.declarativeNetRequest.ResourceType[] {
+function convertResourceTypes(types: string[]): chrome.declarativeNetRequest.ResourceType[] {
   const map: { [key: string]: chrome.declarativeNetRequest.ResourceType } = {
     main_frame: chrome.declarativeNetRequest.ResourceType.MAIN_FRAME,
     sub_frame: chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
@@ -89,7 +87,7 @@ function convertResourceTypes(
     if (map[t]) {
       result.push(map[t]);
     } else if (t === 'imageset') {
-        result.push(chrome.declarativeNetRequest.ResourceType.IMAGE);
+      result.push(chrome.declarativeNetRequest.ResourceType.IMAGE);
     }
   }
   return result;

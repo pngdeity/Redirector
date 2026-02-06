@@ -20,15 +20,18 @@ This project has been modernized to follow current web extension standards:
 ## Development
 
 ### Prerequisites
+
 - Node.js (v20 or higher recommended)
 - npm
 
 ### Installation
+
 ```bash
 npm install
 ```
 
 ### Commands
+
 - `npm run dev`: Start Vite development server with HMR.
 - `npm run build`: Build the extension into the `dist/` directory.
 - `npm run test`: Run the test suite using Vitest.
@@ -36,6 +39,7 @@ npm install
 - `npm run format`: Automatically format the codebase using Prettier.
 
 ### Testing in Browser
+
 1. Run `npm run build`.
 2. Open your browser's extension management page (`chrome://extensions` or `about:debugging`).
 3. Enable "Developer mode".
@@ -49,6 +53,7 @@ npm install
 ## Examples
 
 ### De-mobilizer
+
 - Example URL: `https://en.m.wikipedia.org/`
 - Include pattern: `^(https?://)([a-z0-9-]*\.)m(?:obile)?\.(.*)`
 - Redirect to: `$1$2$3`
@@ -56,6 +61,7 @@ npm install
 - Description: Always show the desktop version of websites
 
 ### AMP redirect
+
 - Example URL: `https://www.google.com/amp/www.example.com/amp/document`
 - Include pattern: `^(?:https?://)www.(?:google|bing).com/amp/(?:s/)?(.*)`
 - Redirect to: `https://$1`
@@ -63,6 +69,7 @@ npm install
 - Description: AMP is bad
 
 ### YouTube Shorts to YouTube
+
 - Example URL: `https://www.youtube.com/shorts/video-id`
 - Include pattern: `^(?:https?://)(?:www.)?youtube.com/shorts/([a-zA-Z0-9_-]+)(.*)`
 - Redirect to: `https://www.youtube.com/watch?v=$1$2`
