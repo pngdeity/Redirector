@@ -79,20 +79,20 @@ export class RedirectClass {
   }
 
   compile(): void {
-    var incPattern = this._preparePattern(this.includePattern);
-    var excPattern = this._preparePattern(this.excludePattern);
+    const incPattern = this._preparePattern(this.includePattern);
+    const excPattern = this._preparePattern(this.excludePattern);
 
     if (incPattern) {
       try {
         this._rxInclude = new RegExp(incPattern, 'gi');
-      } catch (e) {
+      } catch {
         this._rxInclude = null;
       }
     }
     if (excPattern) {
       try {
         this._rxExclude = new RegExp(excPattern, 'gi');
-      } catch (e) {
+      } catch {
         this._rxExclude = null;
       }
     }
@@ -134,13 +134,13 @@ export class RedirectClass {
     if (!this._rxInclude) {
       this.compile();
     }
-    var result: RedirectResult = {
+    const result: RedirectResult = {
       isMatch: false,
       isExcludeMatch: false,
       isDisabledMatch: false,
       redirectTo: '',
     };
-    var redirectTo = this._includeMatch(url);
+    const redirectTo = this._includeMatch(url);
 
     if (redirectTo !== null) {
       if (this.disabled && !forceIgnoreDisabled) {
@@ -190,7 +190,7 @@ export class RedirectClass {
 
     this.compile();
 
-    var match = this.getMatch(this.exampleUrl, true);
+    const match = this.getMatch(this.exampleUrl, true);
 
     if (match.isExcludeMatch) {
       this.error = 'The exclude pattern excludes the example url.';
@@ -225,10 +225,9 @@ export class RedirectClass {
       return pattern;
     } else {
       //Convert wildcard to regex pattern
-      var converted = '^';
-      for (var i = 0; i < pattern.length; i++) {
-        var ch = pattern.charAt(i);
-        if ('()[]{}?.^$\\+'.indexOf(ch) != -1) {
+      let converted = '^';
+      for (const ch of pattern) {
+        if ('()[]{}?.^$\\+|$'.indexOf(ch) != -1) {
           converted += '\\' + ch;
         } else if (ch == '*') {
           converted += '(.*?)';
@@ -246,7 +245,7 @@ export class RedirectClass {
   }
 
   get processMatchesExampleText(): string {
-    let examples = {
+    const examples = {
       noProcessing: 'Use matches as they are',
       urlEncode: 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
       urlDecode: 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
@@ -261,13 +260,13 @@ export class RedirectClass {
     if (!this._rxInclude) {
       return null;
     }
-    var matches = this._rxInclude.exec(url);
+    const matches = this._rxInclude.exec(url);
     if (!matches) {
       return null;
     }
-    var resultUrl = this.redirectUrl;
-    for (var i = matches.length - 1; i > 0; i--) {
-      var repl = matches[i] || '';
+    let resultUrl = this.redirectUrl;
+    for (let i = matches.length - 1; i > 0; i--) {
+      let repl = matches[i] || '';
       if (this.processMatches == 'urlDecode') {
         repl = unescape(repl);
       } else if (this.processMatches == 'doubleUrlDecode') {
@@ -290,7 +289,7 @@ export class RedirectClass {
     if (!this._rxExclude) {
       return false;
     }
-    var shouldExclude = this._rxExclude.test(url);
+    const shouldExclude = this._rxExclude.test(url);
     this._rxExclude.lastIndex = 0;
     return shouldExclude;
   }

@@ -32,12 +32,12 @@ function cancelEdit() {
 }
 
 function saveRedirect() {
-  let savedRedirect = new Redirect(activeRedirect).toObject();
+  const savedRedirect = new Redirect(activeRedirect).toObject();
   if (activeRedirect.existing) {
     REDIRECTS[activeRedirect.index] = savedRedirect; //To strip out any extra crap we've added
   } else {
     REDIRECTS.push(savedRedirect);
-    let newNode = template.cloneNode(true) as HTMLElement;
+    const newNode = template.cloneNode(true) as HTMLElement;
     newNode.removeAttribute('id');
     el('.redirect-rows').appendChild(newNode);
   }
@@ -49,7 +49,7 @@ function saveRedirect() {
 
 function toggleAdvancedOptions(ev: Event) {
   ev.preventDefault();
-  let advancedOptions = el('.advanced');
+  const advancedOptions = el('.advanced');
   if (advancedOptions.classList.contains('hidden')) {
     advancedOptions.classList.remove('hidden');
     el('#advanced-toggle a').textContent = 'Hide advanced options...';
@@ -61,19 +61,20 @@ function toggleAdvancedOptions(ev: Event) {
 
 function editFormChange() {
   //Now read values back from the form...
-  for (let input of Array.from(
+  for (const input of Array.from(
     el('#edit-redirect-form').querySelectorAll('input[type="text"][data-bind]')
   )) {
-    let prop = input.getAttribute('data-bind')!;
+    const prop = input.getAttribute('data-bind')!;
     activeRedirect[prop] = (input as HTMLInputElement).value;
   }
   activeRedirect.appliesTo = [];
-  for (let input of Array.from(el('#apply-to').querySelectorAll('input:checked'))) {
+  for (const input of Array.from(el('#apply-to').querySelectorAll('input:checked'))) {
     activeRedirect.appliesTo.push((input as HTMLInputElement).value);
   }
 
-  activeRedirect.processMatches = (el('#process-matches option:checked') as HTMLOptionElement)
-    .value;
+  activeRedirect.processMatches = (
+    el('#process-matches option:checked') as HTMLOptionElement
+  ).value;
   activeRedirect.patternType = (el('[name="patterntype"]:checked') as HTMLInputElement).value;
 
   activeRedirect.updateExampleResult();
@@ -84,13 +85,13 @@ function editFormChange() {
 var deleteIndex: number;
 export function confirmDeleteRedirect(index: number) {
   deleteIndex = index;
-  let redirect = REDIRECTS[deleteIndex];
+  const redirect = REDIRECTS[deleteIndex];
   showForm('#delete-redirect-form', redirect);
 }
 
 function deleteRedirect() {
   REDIRECTS.splice(deleteIndex, 1);
-  let node = el(`.redirect-row[data-index="${deleteIndex}"]`);
+  const node = el(`.redirect-row[data-index="${deleteIndex}"]`);
   node.parentNode!.removeChild(node);
   updateBindings();
   saveChanges();

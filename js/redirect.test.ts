@@ -7,7 +7,7 @@ describe('Redirect', () => {
       const r = new Redirect({
         includePattern: 'http://example.com/*',
         redirectUrl: 'http://example.com/foo/$1',
-        patternType: 'W'
+        patternType: 'W',
       });
       const result = r.getMatch('http://example.com/bar');
       expect(result.isMatch).toBe(true);
@@ -18,7 +18,7 @@ describe('Redirect', () => {
       const r = new Redirect({
         includePattern: 'http://*.example.com/*',
         redirectUrl: 'http://example.com/$2/$1',
-        patternType: 'W'
+        patternType: 'W',
       });
       const result = r.getMatch('http://foo.example.com/bar');
       expect(result.isMatch).toBe(true);
@@ -29,7 +29,7 @@ describe('Redirect', () => {
       const r = new Redirect({
         includePattern: 'http://example.com/*',
         redirectUrl: 'http://google.com',
-        patternType: 'W'
+        patternType: 'W',
       });
       const result = r.getMatch('http://other.com/foo');
       expect(result.isMatch).toBe(false);
@@ -41,7 +41,7 @@ describe('Redirect', () => {
       const r = new Redirect({
         includePattern: '^http://example.com/(.*)$',
         redirectUrl: 'http://example.com/foo/$1',
-        patternType: 'R'
+        patternType: 'R',
       });
       const result = r.getMatch('http://example.com/bar');
       expect(result.isMatch).toBe(true);
@@ -52,7 +52,7 @@ describe('Redirect', () => {
       const r = new Redirect({
         includePattern: 'http://(.*).example.com/(.*)',
         redirectUrl: 'http://example.com/$2/$1',
-        patternType: 'R'
+        patternType: 'R',
       });
       const result = r.getMatch('http://foo.example.com/bar');
       expect(result.isMatch).toBe(true);
@@ -66,9 +66,9 @@ describe('Redirect', () => {
         includePattern: 'http://example.com/*',
         excludePattern: 'http://example.com/foo',
         redirectUrl: 'http://google.com',
-        patternType: 'W'
+        patternType: 'W',
       });
-      
+
       const match = r.getMatch('http://example.com/bar');
       expect(match.isMatch).toBe(true);
 
@@ -84,7 +84,7 @@ describe('Redirect', () => {
         includePattern: 'http://example.com/*',
         redirectUrl: 'http://google.com?q=$1',
         patternType: 'W',
-        processMatches: 'urlEncode'
+        processMatches: 'urlEncode',
       });
       const result = r.getMatch('http://example.com/foo bar');
       expect(result.redirectTo).toBe('http://google.com?q=foo%20bar');
@@ -95,35 +95,35 @@ describe('Redirect', () => {
         includePattern: 'http://example.com/*',
         redirectUrl: 'http://google.com?q=$1',
         patternType: 'W',
-        processMatches: 'urlDecode'
+        processMatches: 'urlDecode',
       });
       const result = r.getMatch('http://example.com/foo%20bar');
       expect(result.redirectTo).toBe('http://google.com?q=foo bar');
     });
-    
+
     it('should base64 decode matches', () => {
-        const r = new Redirect({
-            includePattern: 'http://example.com/*',
-            redirectUrl: '$1',
-            patternType: 'W',
-            processMatches: 'base64decode'
-        });
-        // aHR0cDovL2dvb2dsZS5jb20= is http://google.com
-        const result = r.getMatch('http://example.com/aHR0cDovL2dvb2dsZS5jb20=');
-        expect(result.redirectTo).toBe('http://google.com');
-    })
-  });
-  
-  describe('Complex Examples', () => {
-      it('should handle the De-mobilizer example', () => {
-          const r = new Redirect({
-              includePattern: '^(https?://)([a-z0-9-]*\.)m(?:obile)?\.(.*)',
-              redirectUrl: '$1$2$3',
-              patternType: 'R'
-          });
-          const result = r.getMatch('https://en.m.wikipedia.org/wiki/Software_engineering');
-          expect(result.isMatch).toBe(true);
-          expect(result.redirectTo).toBe('https://en.wikipedia.org/wiki/Software_engineering');
+      const r = new Redirect({
+        includePattern: 'http://example.com/*',
+        redirectUrl: '$1',
+        patternType: 'W',
+        processMatches: 'base64decode',
       });
+      // aHR0cDovL2dvb2dsZS5jb20= is http://google.com
+      const result = r.getMatch('http://example.com/aHR0cDovL2dvb2dsZS5jb20=');
+      expect(result.redirectTo).toBe('http://google.com');
+    });
+  });
+
+  describe('Complex Examples', () => {
+    it('should handle the De-mobilizer example', () => {
+      const r = new Redirect({
+        includePattern: '^(https?://)([a-z0-9-]*\\.)m(?:obile)?\\.(.*)',
+        redirectUrl: '$1$2$3',
+        patternType: 'R',
+      });
+      const result = r.getMatch('https://en.m.wikipedia.org/wiki/Software_engineering');
+      expect(result.isMatch).toBe(true);
+      expect(result.redirectTo).toBe('https://en.wikipedia.org/wiki/Software_engineering');
+    });
   });
 });

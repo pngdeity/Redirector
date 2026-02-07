@@ -2,54 +2,54 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "master", "main" ]
-    tags: [ "v*" ]
+    branches: ['master', 'main']
+    tags: ['v*']
   pull_request:
-    branches: [ "master", "main" ]
+    branches: ['master', 'main']
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Lint
-      run: npm run lint
+      - name: Lint
+        run: npm run lint
 
-    - name: Test
-      run: npm run test
+      - name: Test
+        run: npm run test
 
-    - name: Build
-      run: npm run build
+      - name: Build
+        run: npm run build
 
-    - name: Zip Artifact
-      run: |
-        cd dist
-        zip -r ../redirector.zip .
-        cd ..
+      - name: Zip Artifact
+        run: |
+          cd dist
+          zip -r ../redirector.zip .
+          cd ..
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: redirector-extension
-        path: redirector.zip
-        if-no-files-found: error
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redirector-extension
+          path: redirector.zip
+          if-no-files-found: error
 
-    - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: redirector.zip
-        generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: redirector.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

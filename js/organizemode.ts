@@ -13,9 +13,9 @@ function displayOrganizeModeMessage() {
 
 function organizeModeToggle(ev: Event) {
   ev.preventDefault();
-  let organizeModes = ['.groupings', '.arrows'];
-  for (let mode of organizeModes) {
-    let organizeModeElms = document.querySelectorAll(mode);
+  const organizeModes = ['.groupings', '.arrows'];
+  for (const mode of organizeModes) {
+    const organizeModeElms = document.querySelectorAll(mode);
     for (let i = 0; i < organizeModeElms.length; ++i) {
       let elm = organizeModeElms[i] as HTMLElement;
       let isHidden = false;
@@ -24,14 +24,20 @@ function organizeModeToggle(ev: Event) {
         elm = elm.parentElement as HTMLElement;
       }
       isHidden = elm.classList.contains('hidden');
-      isHidden ? elm.classList.remove('hidden') : elm.classList.add('hidden');
+      if (isHidden) {
+        elm.classList.remove('hidden');
+      } else {
+        elm.classList.add('hidden');
+      }
     }
   }
 
-  let buttonClasses = el('#organize-mode').classList;
-  !buttonClasses.contains('active')
-    ? el('#organize-mode').classList.add('active')
-    : el('#organize-mode').classList.remove('active');
+  const buttonClasses = el('#organize-mode').classList;
+  if (!buttonClasses.contains('active')) {
+    el('#organize-mode').classList.add('active');
+  } else {
+    el('#organize-mode').classList.remove('active');
+  }
 
   displayOrganizeModeMessage();
 }

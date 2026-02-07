@@ -1,5 +1,5 @@
 import { RedirectClass as Redirect } from './redirect';
-import { convertToDNR, DNRRule } from './dnr-converter';
+import { convertToDNR } from './dnr-converter';
 
 interface Log {
   (msg: string, force?: boolean): void;
@@ -16,16 +16,12 @@ log.enabled = false;
 // Global state for Legacy Fallback (In-memory, but reloaded on startup)
 // Rules that cannot be handled by DNR will be stored here.
 // In V3, the service worker can die, so we must ensure we reload these on startup.
-let legacyRules: Redirect[] = [];
+export let legacyRules: Redirect[] = [];
 
 // Cache for loop detection (Legacy only)
 const ignoreNextRequest: { [key: string]: number } = {};
 const justRedirected: { [key: string]: { timestamp: number; count: number } } = {};
 const redirectThreshold = 3;
-
-function isDarkMode() {
-  return false; // Not reliable in Service Worker context without window
-}
 
 // Icon updating
 function updateIcon() {
@@ -43,14 +39,17 @@ function updateIcon() {
 
 // --- DNR Synchronization Logic ---
 
-async function syncRules() {
+export async function syncRules() {
   log('Syncing rules...');
-  const { redirects, disabled } = await chrome.storage.local.get({ redirects: [], disabled: false });
+  const { redirects, disabled } = await chrome.storage.local.get({
+    redirects: [],
+    disabled: false,
+  });
 
   if (disabled) {
     log('Extension disabled, clearing all rules.');
     await chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: (await chrome.declarativeNetRequest.getDynamicRules()).map(r => r.id)
+      removeRuleIds: (await chrome.declarativeNetRequest.getDynamicRules()).map((r) => r.id),
     });
     legacyRules = [];
     return;
@@ -60,7 +59,7 @@ async function syncRules() {
   const newLegacyRules: Redirect[] = [];
 
   let idCounter = 1;
-  for (const r of (redirects as any[])) {
+  for (const r of redirects as any[]) {
     const redirect = new Redirect(r);
     if (redirect.disabled) continue;
 
@@ -76,11 +75,11 @@ async function syncRules() {
 
   // Update DNR rules
   const oldRules = await chrome.declarativeNetRequest.getDynamicRules();
-  const removeRuleIds = oldRules.map(r => r.id);
-  
+  const removeRuleIds = oldRules.map((r) => r.id);
+
   await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds,
-    addRules: dnrRules
+    addRules: dnrRules,
   });
 
   // Update Legacy state
@@ -92,13 +91,13 @@ async function syncRules() {
 // This handles complex rules (e.g. decoding) by redirecting *after* the request has started.
 // This causes a "double load" but preserves functionality.
 
-function checkLegacyRedirects(details: any) {
+export function checkLegacyRedirects(details: any) {
   if (details.method !== 'GET') return;
   if (legacyRules.length === 0) return;
 
   // Loop detection
   const timestamp = ignoreNextRequest[details.url];
-  if (timestamp && (Date.now() - timestamp < 3000)) {
+  if (timestamp && Date.now() - timestamp < 3000) {
     delete ignoreNextRequest[details.url];
     return;
   }
@@ -120,31 +119,30 @@ function checkLegacyRedirects(details: any) {
       }
 
       log(`Legacy Redirect: ${details.url} -> ${result.redirectTo}`);
-      
+
       // Perform redirect via Tabs API
       ignoreNextRequest[result.redirectTo] = Date.now();
       chrome.tabs.update(details.tabId, { url: result.redirectTo });
-      
+
       // Show notification if enabled (handled by message passing or checking storage)
       checkNotifications(r, details.url, result.redirectTo);
-      break; 
+      break;
     }
   }
 }
 
 function checkNotifications(redirect: Redirect, original: string, target: string) {
-    chrome.storage.local.get({ enableNotifications: false }, (data) => {
-        if (data.enableNotifications) {
-             chrome.notifications.create({
-                type: 'basic',
-                iconUrl: 'images/icon-light-theme-48.png',
-                title: 'Redirector',
-                message: `Redirected ${original} to ${target}`
-            });
-        }
-    });
+  chrome.storage.local.get({ enableNotifications: false }, (data) => {
+    if (data.enableNotifications) {
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'images/icon-light-theme-48.png',
+        title: 'Redirector',
+        message: `Redirected ${original} to ${target}`,
+      });
+    }
+  });
 }
-
 
 // --- Initialization & Event Listeners ---
 
@@ -173,10 +171,9 @@ chrome.storage.onChanged.addListener((changes) => {
 });
 
 // Legacy Listener registration
-chrome.webRequest.onBeforeRequest.addListener(
-  checkLegacyRedirects as any,
-  { urls: ['<all_urls>'] }
-);
+chrome.webRequest.onBeforeRequest.addListener(checkLegacyRedirects as any, {
+  urls: ['<all_urls>'],
+});
 
 // Message Handling
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -187,22 +184,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   } else if (request.type === 'save-redirects') {
     chrome.storage.local.set({ redirects: request.redirects }, () => {
-      sendResponse({ message: 'Redirects saved' });
+      if (chrome.runtime.lastError) {
+        sendResponse({ message: 'Error: ' + chrome.runtime.lastError.message });
+      } else {
+        sendResponse({ message: 'Redirects saved' });
+      }
     });
     return true;
   } else if (request.type === 'update-icon') {
     updateIcon();
     return true;
   } else if (request.type === 'toggle-sync') {
-      // simplified sync toggle logic for now
-      chrome.storage.local.set({ isSyncEnabled: request.isSyncEnabled }, () => {
-          sendResponse({ message: 'sync-enabled' }); // Mock response
-      });
-      return true;
+    // simplified sync toggle logic for now
+    chrome.storage.local.set({ isSyncEnabled: request.isSyncEnabled }, () => {
+      sendResponse({ message: 'sync-enabled' }); // Mock response
+    });
+    return true;
   }
 });
 
 // Initialize logging
 chrome.storage.local.get({ logging: false }, (data) => {
-    log.enabled = data.logging as boolean;
+  log.enabled = data.logging as boolean;
 });

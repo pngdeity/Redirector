@@ -6,10 +6,10 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
   if (typeof el === 'string') {
     el = document.querySelector(el) as HTMLElement;
   }
-  for (let tag of Array.from(el.querySelectorAll('[data-bind]'))) {
-    let prop = tag.getAttribute('data-bind')!;
+  for (const tag of Array.from(el.querySelectorAll('[data-bind]'))) {
+    const prop = tag.getAttribute('data-bind')!;
     if (tag.tagName.toLowerCase() === 'input') {
-      let input = tag as HTMLInputElement;
+      const input = tag as HTMLInputElement;
       if (input.getAttribute('type')!.toLowerCase() === 'radio') {
         input.checked = dataObject[prop] === input.getAttribute('value');
       } else if (input.getAttribute('type')!.toLowerCase() === 'checkbox') {
@@ -18,7 +18,7 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
         input.value = dataObject[prop];
       }
     } else if (tag.tagName.toLowerCase() === 'select') {
-      for (let opt of Array.from(tag.querySelectorAll('option'))) {
+      for (const opt of Array.from(tag.querySelectorAll('option'))) {
         if (opt.getAttribute('value') === dataObject[prop]) {
           opt.setAttribute('selected', 'selected');
         } else {
@@ -27,7 +27,7 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
       }
     } else if (Array.isArray(dataObject[prop])) {
       //Array of values, check any checkboxes in child elements
-      for (let checkbox of Array.from(tag.querySelectorAll('input[type="checkbox"'))) {
+      for (const checkbox of Array.from(tag.querySelectorAll('input[type="checkbox"'))) {
         (checkbox as HTMLInputElement).checked = dataObject[prop].includes(
           checkbox.getAttribute('value')
         );
@@ -36,12 +36,12 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
       tag.textContent = dataObject[prop];
     }
   }
-  for (let tag of Array.from(el.querySelectorAll('[data-show]'))) {
-    let shouldShow = boolValue(tag.getAttribute('data-show')!);
+  for (const tag of Array.from(el.querySelectorAll('[data-show]'))) {
+    const shouldShow = boolValue(tag.getAttribute('data-show')!);
     (tag as HTMLElement).style.display = shouldShow ? '' : 'none';
   }
-  for (let tag of Array.from(el.querySelectorAll('[data-disabled]'))) {
-    let isDisabled = boolValue(tag.getAttribute('data-disabled')!);
+  for (const tag of Array.from(el.querySelectorAll('[data-disabled]'))) {
+    const isDisabled = boolValue(tag.getAttribute('data-disabled')!);
 
     if (isDisabled) {
       tag.classList.add('disabled');
@@ -51,9 +51,9 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
       tag.removeAttribute('disabled');
     }
   }
-  for (let tag of Array.from(el.querySelectorAll('[data-class]'))) {
-    let [className, prop] = tag.getAttribute('data-class')!.split(':');
-    let shouldHaveClass = boolValue(prop);
+  for (const tag of Array.from(el.querySelectorAll('[data-class]'))) {
+    const [className, prop] = tag.getAttribute('data-class')!.split(':');
+    const shouldHaveClass = boolValue(prop);
     if (shouldHaveClass) {
       tag.classList.add(className);
     } else {
@@ -63,14 +63,14 @@ export function dataBind(el: HTMLElement | string, dataObject: any) {
 }
 
 export function show(id: string) {
-  let el = document.querySelector(id) as HTMLElement;
+  const el = document.querySelector(id) as HTMLElement;
   if (el) {
     el.style.display = 'block';
   }
 }
 
 export function hide(id: string) {
-  let el = document.querySelector(id) as HTMLElement;
+  const el = document.querySelector(id) as HTMLElement;
   if (el) {
     el.style.display = 'none';
   }
@@ -99,7 +99,7 @@ export function hideForm(selector: string) {
 
 // Shows a message bar above the list of redirects.
 export function showMessage(message: string, success?: boolean) {
-  let messageBox = document.getElementById('message-box') as HTMLElement;
+  const messageBox = document.getElementById('message-box') as HTMLElement;
   dataBind('#message-box', { message });
   if (success) {
     messageBox.className = 'visible success';
@@ -107,7 +107,7 @@ export function showMessage(message: string, success?: boolean) {
     messageBox.className = 'visible error';
   }
 
-  let timer = 20;
+  const timer = 20;
 
   //Remove the message in 20 seconds if it hasn't been changed...
   setTimeout(function () {

@@ -36,15 +36,15 @@ export function convertToDNR(redirect: Redirect, id: number): DNRRule | null {
 }
 
 function convertPatternToRegex(redirect: Redirect, useExclude: boolean = false): string {
-  let pattern = useExclude ? redirect.excludePattern : redirect.includePattern;
+  const pattern = useExclude ? redirect.excludePattern : redirect.includePattern;
 
   if (redirect.patternType === 'W') {
     // Convert Wildcard to Regex
     if (!pattern) return '.*'; // Fallback
     let converted = '^';
     for (let i = 0; i < pattern.length; i++) {
-      let ch = pattern.charAt(i);
-      if ('()[]{}?.^\\+'.indexOf(ch) !== -1) {
+      const ch = pattern.charAt(i);
+      if ('()[]{}?.^\\+|$'.indexOf(ch) !== -1) {
         converted += '\\' + ch;
       } else if (ch === '*') {
         converted += '(.*?)';
@@ -62,12 +62,10 @@ function convertPatternToRegex(redirect: Redirect, useExclude: boolean = false):
 
 function convertSubstitution(url: string): string {
   // JS uses $1, DNR uses \1
-  return url.replace(/\$(\d+)/g, '\\$1');
+  return url.replace(/\\/g, '\\\\').replace(/\$(\d+)/g, '\\$1');
 }
 
-function convertResourceTypes(
-  types: string[]
-): chrome.declarativeNetRequest.ResourceType[] {
+function convertResourceTypes(types: string[]): chrome.declarativeNetRequest.ResourceType[] {
   const map: { [key: string]: chrome.declarativeNetRequest.ResourceType } = {
     main_frame: chrome.declarativeNetRequest.ResourceType.MAIN_FRAME,
     sub_frame: chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
@@ -89,7 +87,7 @@ function convertResourceTypes(
     if (map[t]) {
       result.push(map[t]);
     } else if (t === 'imageset') {
-        result.push(chrome.declarativeNetRequest.ResourceType.IMAGE);
+      result.push(chrome.declarativeNetRequest.ResourceType.IMAGE);
     }
   }
   return result;

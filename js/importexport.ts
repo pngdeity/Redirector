@@ -18,7 +18,7 @@ function showImportedMessage(imported: number, existing: number) {
     showMessage('All redirects in the file already existed and were ignored.');
   }
   if (imported > 0 && existing > 0) {
-    var m = 'Successfully imported ' + imported + ' redirect' + (imported > 1 ? 's' : '') + '. ';
+    let m = 'Successfully imported ' + imported + ' redirect' + (imported > 1 ? 's' : '') + '. ';
     if (existing == 1) {
       m += '1 redirect already existed and was ignored.';
     } else {
@@ -28,15 +28,15 @@ function showImportedMessage(imported: number, existing: number) {
   }
 }
 
-function importRedirects(ev: Event) {
-  let file = (ev.target as HTMLInputElement).files![0];
+export function importRedirects(ev: Event) {
+  const file = (ev.target as HTMLInputElement).files![0];
   if (!file) {
     return;
   }
-  var reader = new FileReader();
+  const reader = new FileReader();
 
-  reader.onload = function (e) {
-    var data;
+  reader.onload = function (_e) {
+    let data;
     try {
       data = JSON.parse(reader.result as string);
     } catch (e: any) {
@@ -44,15 +44,19 @@ function importRedirects(ev: Event) {
       return;
     }
 
-    if (!data.redirects) {
-      showMessage('Invalid JSON, missing "redirects" property');
+    if (!data.redirects || !Array.isArray(data.redirects)) {
+      showMessage('Invalid JSON, missing "redirects" property or it is not an array');
       return;
     }
 
-    var imported = 0,
-      existing = 0;
-    for (var i = 0; i < data.redirects.length; i++) {
-      var r = new Redirect(data.redirects[i]);
+    let imported = 0;
+    let existing = 0;
+
+    for (let i = 0; i < data.redirects.length; i++) {
+      const item = data.redirects[i];
+      if (typeof item !== 'object' || item === null) continue;
+
+      const r = new Redirect(item);
       r.updateExampleResult();
       if (
         REDIRECTS.some(function (i) {
@@ -74,25 +78,26 @@ function importRedirects(ev: Event) {
 
   try {
     reader.readAsText(file, 'utf-8');
-  } catch (e) {
+  } catch {
     showMessage('Failed to read import file');
   }
 }
 
-function updateExportLink() {
-  var redirects = REDIRECTS.map(function (r) {
+export function updateExportLink() {
+  const redirects = REDIRECTS.map(function (r) {
     return new Redirect(r).toObject();
   });
 
-  let version = chrome.runtime.getManifest().version;
+  const version = chrome.runtime.getManifest().version;
 
-  var exportObj = {
+  const exportObj = {
     createdBy: 'Redirector v' + version,
     createdAt: new Date(),
     redirects: redirects,
   };
 
-  var json = JSON.stringify(exportObj, null, 4);
+  const json = JSON.stringify(exportObj, null, 4);
+
 
   //Using encodeURIComponent here instead of base64 because base64 always messed up our encoding for some reason...
   (el('#export-link') as HTMLAnchorElement).href =
@@ -102,7 +107,7 @@ function updateExportLink() {
 export function setupImportExportEventListeners() {
   el('#import-file').addEventListener('change', importRedirects);
   el('#export-link').addEventListener('mousedown', updateExportLink);
+  
+  // Initial update of the link
+  updateExportLink();
 }
-
-// Initial update of the link
-updateExportLink();

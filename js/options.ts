@@ -7,7 +7,7 @@ import { setupImportExportEventListeners } from './importexport';
 import { setupOrganizeModeToggleEventListener } from './organizemode';
 
 // Map string action names to actual functions
-const ActionMap: { [key: string]: Function } = {
+const ActionMap: { [key: string]: (index: number) => void } = {
   moveUp: RPA.moveUp,
   moveDown: RPA.moveDown,
   moveUpTop: RPA.moveUpTop,
@@ -69,20 +69,20 @@ function pageLoad() {
 
   // General Action Dispatcher
   el('.redirect-rows').addEventListener('click', function (ev) {
-    let target = ev.target as HTMLElement;
+    const target = ev.target as HTMLElement;
     if ((target as HTMLInputElement).type == 'checkbox') {
       (target.nextElementSibling as HTMLElement).classList.add('checkMarked');
       target.parentElement!.parentElement!.classList.add('grouped');
       RPA.toggleGrouping(parseInt(target.getAttribute('data-index') || '-1'));
     }
 
-    let action = target.getAttribute('data-action');
+    const action = target.getAttribute('data-action');
     if (!action) {
       return;
     }
 
-    let handler = ActionMap[action];
-    let index = parseInt(target.getAttribute('data-index')!);
+    const handler = ActionMap[action];
+    const index = parseInt(target.getAttribute('data-index')!);
 
     if (handler) {
       handler(index);
@@ -96,13 +96,12 @@ function pageLoad() {
 }
 
 function updateFavicon(e: MediaQueryListEvent | MediaQueryList) {
-  let type = e.matches ? 'dark' : 'light';
-  (el('link[rel="shortcut icon"]') as HTMLLinkElement).href =
-    `images/icon-${type}-theme-32.png`;
+  const type = e.matches ? 'dark' : 'light';
+  (el('link[rel="shortcut icon"]') as HTMLLinkElement).href = `images/icon-${type}-theme-32.png`;
   chrome.runtime.sendMessage({ type: 'update-icon' });
 }
 
-let mql = window.matchMedia('(prefers-color-scheme:dark)');
+const mql = window.matchMedia('(prefers-color-scheme:dark)');
 mql.onchange = updateFavicon;
 updateFavicon(mql);
 

@@ -21,12 +21,10 @@
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess"
   ],
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
-    "service_worker": "js/background.ts"
+    "service_worker": "js/background.ts",
+    "scripts": ["js/background.ts"]
   },
   "options_ui": {
     "page": "popup.html",

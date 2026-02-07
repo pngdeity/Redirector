@@ -15,7 +15,7 @@ function normalize(r: Redirect) {
 // Saves the entire list of redirects to storage.
 export function saveChanges() {
   // Clean them up so angular $$hash things and stuff don't get serialized.
-  let arr = REDIRECTS.map(normalize);
+  const arr = REDIRECTS.map(normalize);
 
   chrome.runtime.sendMessage({ type: 'save-redirects', redirects: arr }, function (response) {
     console.log(response.message);
@@ -65,8 +65,8 @@ export function toggleSyncSetting() {
 export function renderRedirects() {
   el('.redirect-rows').textContent = '';
   for (let i = 0; i < REDIRECTS.length; i++) {
-    let r = REDIRECTS[i];
-    let node = template.cloneNode(true) as HTMLElement;
+    const r = REDIRECTS[i];
+    const node = template.cloneNode(true) as HTMLElement;
     node.removeAttribute('id');
 
     renderSingleRedirect(node, r, i);
@@ -87,11 +87,11 @@ function renderSingleRedirect(node: HTMLElement, redirect: any, index: number) {
   dataBind(node, redirect);
 
   node.setAttribute('data-index', index.toString());
-  for (let btn of Array.from(node.querySelectorAll('.btn'))) {
+  for (const btn of Array.from(node.querySelectorAll('.btn'))) {
     btn.setAttribute('data-index', index.toString());
   }
 
-  let checkmark = node.querySelectorAll('.checkmark');
+  const checkmark = node.querySelectorAll('.checkmark');
 
   if (checkmark.length == 1) {
     checkmark[0].setAttribute('data-index', index.toString());
@@ -104,7 +104,7 @@ function renderSingleRedirect(node: HTMLElement, redirect: any, index: number) {
 }
 
 export function updateBindings() {
-  let nodes = document.querySelectorAll('.redirect-row');
+  const nodes = document.querySelectorAll('.redirect-row');
 
   if (nodes.length !== REDIRECTS.length) {
     throw new Error(
@@ -113,17 +113,17 @@ export function updateBindings() {
   }
 
   for (let i = 0; i < nodes.length; i++) {
-    let node = nodes[i] as HTMLElement;
-    let redirect = REDIRECTS[i];
+    const node = nodes[i] as HTMLElement;
+    const redirect = REDIRECTS[i];
     renderSingleRedirect(node, redirect, i);
   }
 }
 
 export function duplicateRedirect(index: number) {
-  let redirect = new Redirect(REDIRECTS[index]);
+  const redirect = new Redirect(REDIRECTS[index]);
   REDIRECTS.splice(index, 0, redirect.toObject());
 
-  let newNode = template.cloneNode(true) as HTMLElement;
+  const newNode = template.cloneNode(true) as HTMLElement;
   newNode.removeAttribute('id');
   el('.redirect-rows').appendChild(newNode);
   updateBindings();
@@ -131,7 +131,7 @@ export function duplicateRedirect(index: number) {
 }
 
 function checkIfGroupingExists() {
-  let grouping = REDIRECTS.map((row, i) => {
+  const grouping = REDIRECTS.map((row, i) => {
     return { row, index: i };
   })
     .filter((result) => result.row.grouped)
@@ -140,18 +140,20 @@ function checkIfGroupingExists() {
 }
 
 export function toggleDisabled(index: number) {
-  let grouping = checkIfGroupingExists();
+  const grouping = checkIfGroupingExists();
 
   if (grouping && grouping.length > 1) {
-    for (let redirect of grouping) {
-      let redirectDom = REDIRECTS[redirect.index];
+    for (const redirect of grouping) {
+      const redirectDom = REDIRECTS[redirect.index];
       redirectDom.disabled = !redirectDom.disabled;
       redirectDom.grouped = !redirectDom.grouped;
-      let elm = document.querySelector("[data-index='" + redirect.index.toString() + "']") as HTMLElement;
+      const elm = document.querySelector(
+        "[data-index='" + redirect.index.toString() + "']"
+      ) as HTMLElement;
       clearGrouping(elm);
     }
   } else {
-    let redirect = REDIRECTS[index];
+    const redirect = REDIRECTS[index];
     redirect.disabled = !redirect.disabled;
   }
 
@@ -161,8 +163,8 @@ export function toggleDisabled(index: number) {
 
 function clearGrouping(elm: HTMLElement) {
   elm.classList.remove('grouped');
-  let checkMarkElm = elm.querySelector('label > .groupings') as HTMLElement;
-  let toggleBoxElm = elm.querySelector('input') as HTMLElement;
+  const checkMarkElm = elm.querySelector('label > .groupings') as HTMLElement;
+  const toggleBoxElm = elm.querySelector('input') as HTMLElement;
   checkMarkElm.classList.remove('checkMarked');
   toggleBoxElm.classList.remove('checked');
 }
@@ -181,9 +183,11 @@ function groupedMoveDown(group: any[]) {
     jumpLength = group.length;
   }
 
-  for (let rule of group) {
-    let elm = document.querySelector("[data-index='" + rule.index.toString() + "']") as HTMLElement;
-    let prev = document.querySelector(
+  for (const rule of group) {
+    const elm = document.querySelector(
+      "[data-index='" + rule.index.toString() + "']"
+    ) as HTMLElement;
+    const prev = document.querySelector(
       "[data-index='" + (rule.index + jumpLength).toString() + "']"
     ) as HTMLElement;
     clearGrouping(elm);
@@ -191,9 +195,9 @@ function groupedMoveDown(group: any[]) {
     swap(elm, prev);
   }
 
-  for (let rule of group) {
+  for (const rule of group) {
     rule.row.grouped = false;
-    let prevRedir = REDIRECTS[rule.index + jumpLength];
+    const prevRedir = REDIRECTS[rule.index + jumpLength];
     REDIRECTS[rule.index + jumpLength] = REDIRECTS[rule.index];
     REDIRECTS[rule.index] = prevRedir;
   }
@@ -203,7 +207,7 @@ function groupedMoveDown(group: any[]) {
 }
 
 function isGroupAdjacent(grouping: any[]) {
-  let distances = [];
+  const distances = [];
   for (let i = grouping.length - 1; i >= 0; i--) {
     if (i != 0) {
       distances.push(grouping[i].index - grouping[i - 1].index);
@@ -219,9 +223,11 @@ function groupedMoveUp(group: any[]) {
     jumpLength = group.length;
   }
 
-  for (let rule of group) {
-    let elm = document.querySelector("[data-index='" + rule.index.toString() + "']") as HTMLElement;
-    let prev = document.querySelector(
+  for (const rule of group) {
+    const elm = document.querySelector(
+      "[data-index='" + rule.index.toString() + "']"
+    ) as HTMLElement;
+    const prev = document.querySelector(
       "[data-index='" + (rule.index - jumpLength).toString() + "']"
     ) as HTMLElement;
     clearGrouping(elm);
@@ -232,9 +238,9 @@ function groupedMoveUp(group: any[]) {
     }
   }
 
-  for (let rule of group) {
+  for (const rule of group) {
     rule.row.grouped = false;
-    let prevRedir = REDIRECTS[rule.index - jumpLength];
+    const prevRedir = REDIRECTS[rule.index - jumpLength];
     REDIRECTS[rule.index - jumpLength] = REDIRECTS[rule.index];
     REDIRECTS[rule.index] = prevRedir;
   }
@@ -243,12 +249,12 @@ function groupedMoveUp(group: any[]) {
   saveChanges();
 }
 export function moveUp(index: number) {
-  let grouping = checkIfGroupingExists();
+  const grouping = checkIfGroupingExists();
 
   if (grouping.length > 1) {
     groupedMoveUp(grouping);
   } else {
-    let prev = REDIRECTS[index - 1];
+    const prev = REDIRECTS[index - 1];
     REDIRECTS[index - 1] = REDIRECTS[index];
     REDIRECTS[index] = prev;
   }
@@ -258,12 +264,12 @@ export function moveUp(index: number) {
 }
 
 export function moveDown(index: number) {
-  let grouping = checkIfGroupingExists();
+  const grouping = checkIfGroupingExists();
 
   if (grouping.length > 1) {
     groupedMoveDown(grouping);
   } else {
-    let next = REDIRECTS[index + 1];
+    const next = REDIRECTS[index + 1];
     REDIRECTS[index + 1] = REDIRECTS[index];
     REDIRECTS[index] = next;
   }
@@ -272,14 +278,14 @@ export function moveDown(index: number) {
 }
 
 export function moveUpTop(index: number) {
-  let top = REDIRECTS[0];
+  const top = REDIRECTS[0];
   move(REDIRECTS, index, 0); // Corrected to 0 for top
   updateBindings();
   saveChanges();
 }
 
 export function moveDownBottom(index: number) {
-  let bottom = REDIRECTS.length - 1;
+  const bottom = REDIRECTS.length - 1;
   move(REDIRECTS, index, bottom);
   updateBindings();
   saveChanges();
