@@ -4,7 +4,7 @@ Web browser extension to redirect URLs based on regex or wildcard patterns. Work
 
 ## Tribute
 
-In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtured it for many years. We miss you Einar, and will always remember your kindness and generosity.
+In loving memory of the original author, Einar Egilsson. He gave us Redirector and selflessly nurtured it for many years. We miss you Einar and will always remember your kindness and generosity.
 
 ## Download Links
 
