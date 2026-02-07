@@ -50,6 +50,8 @@ Currently, the extension must be manually loaded. See [Development](#development
 ### Installation
 
 ```bash
+git clone https://github.com/pngdeity/Redirector/
+cd Redirector
 npm install
 ```
 
@@ -57,8 +59,8 @@ npm install
 
 - `npm run dev`: Start Vite development server with HMR.
 - `npm run build`: Build the extension for both Chrome and Firefox into the `dist/` directory.
-- `npm run build:chrome`: Build only the Chrome version into `dist/chrome/`.
-- `npm run build:firefox`: Build only the Firefox version into `dist/firefox/`.
+   - `npm run build:firefox`: Build only the Firefox version into `dist/firefox/`.
+   - `npm run build:chrome`: Build only the Chrome version into `dist/chrome/`.
 - `npm run test`: Run the test suite using Vitest.
 - `npm run lint`: Check for code style and logic issues using ESLint.
 - `npm run format`: Automatically format the codebase using Prettier.
