@@ -7,44 +7,38 @@ function applyBinding() {
 	dataBind(document.body, viewModel);
 }
 
-function toggle(prop) {
-	storage.get({[prop]: false}, function(obj) {
-		storage.set({[prop] : !obj[prop]});
-		viewModel[prop] = !obj[prop];
-		applyBinding();
-	});
+async function toggle(prop) {
+	const obj = await storage.get({[prop]: false});
+    const newValue = !obj[prop];
+    await storage.set({[prop] : newValue});
+    viewModel[prop] = newValue;
+    applyBinding();
 }
 
-
-
-function openRedirectorSettings() {
+async function openRedirectorSettings() {
 
 	//switch to open one if we have it to minimize conflicts
-	var url = chrome.extension.getURL('redirector.html');
+	var url = chrome.runtime.getURL('redirector.html');
 	
 	//FIREFOXBUG: Firefox chokes on url:url filter if the url is a moz-extension:// url
 	//so we don't use that, do it the more manual way instead.
-	chrome.tabs.query({currentWindow:true}, function(tabs) {
-		for (var i=0; i < tabs.length; i++) {
-			if (tabs[i].url == url) {
-				chrome.tabs.update(tabs[i].id, {active:true}, function(tab) {
-					close();
-				});
-				return;
-			}
-		}
+	const tabs = await chrome.tabs.query({currentWindow:true});
+    for (var i=0; i < tabs.length; i++) {
+        if (tabs[i].url == url) {
+            await chrome.tabs.update(tabs[i].id, {active:true});
+            window.close();
+            return;
+        }
+    }
 
-		chrome.tabs.create({url:url, active:true});
-	});
-	return;
+    await chrome.tabs.create({url:url, active:true});
 };
 
 
-function pageLoad() {
-	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
-		viewModel = obj;
-		applyBinding();
-	})
+async function pageLoad() {
+	const obj = await storage.get({logging:false, enableNotifications:false, disabled: false});
+    viewModel = obj;
+    applyBinding();
 
 	el('#enable-notifications').addEventListener('input', () => toggle('enableNotifications'));
 	el('#enable-logging').addEventListener('input', () => toggle('logging'));
