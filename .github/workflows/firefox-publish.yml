@@ -1,0 +1,40 @@
+name: Publish to Firefox Add-ons
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-firefox:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Build extension
+        run: python3 build.py
+
+      - name: Prepare source for web-ext
+        run: |
+          mkdir firefox-dist
+          unzip build/redirector-firefox.xpi -d firefox-dist
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install web-ext
+        run: npm install -g web-ext
+
+      - name: Sign and Publish
+        run: |
+          npx web-ext sign \
+            --source-dir firefox-dist \
+            --channel listed \
+            --api-key ${{ secrets.FIREFOX_API_KEY }} \
+            --api-secret ${{ secrets.FIREFOX_API_SECRET }}
